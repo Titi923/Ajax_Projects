@@ -40,11 +40,53 @@ function getUser() {
   xhr.send()
 }
 
-let count = 1;
-let newCount = 0;
-let templateUsers = ``;
-let newTemplateUsers = ``
+let count = 5;
+function getUsers() {
+  // first you have to create XHR Object
+  let xhr = new XMLHttpRequest();
 
+  // then you have to open
+  xhr.open("GET", url2, true)
+
+  xhr.onprogress = function () {
+    document.querySelector(".users-title").innerHTML = "Loading..."
+  }
+  // then load it
+  xhr.onload = function () {
+    if (this.status == 200) {
+      const users = JSON.parse(this.responseText)
+      let templateUsers = ``;
+
+      // itterate over all data
+      for (let i = 0; i <= count; i++) {
+        templateUsers +=
+        `
+          <li class="list-group-item active" >User #${i}</li>
+          <li class="list-group-item" >User ID: ${users[i].id} </li>
+          <li class="list-group-item" >User Title: ${users[i].title} </li>
+          <li class="list-group-item" >User Completed: ${users[i].completed} </li>
+        `
+      }
+
+      let counter = 5;
+      if (count <= users.length) {
+        count += counter;
+      } else {
+        console.log("Too Many");
+      }
+
+      document.querySelector(".users").innerHTML = templateUsers
+      document.querySelector(".users-title").innerHTML = "Users:"
+    }
+  }
+
+  // last step is to send it
+  xhr.send()
+}
+
+// CODE PIECE
+// let templateUsers = ``;
+// let newTemplateUsers = ``
 // function getUsersPossibleOptimized() {
 //   // first you have to create XHR Object
 //   let xhr = new XMLHttpRequest();
@@ -77,17 +119,6 @@ let newTemplateUsers = ``
 //       count += 5;
 //       newCount += 5;
 
-//       // let newUserCount = userCount + 5;
-//       // for (let i = userCount+1; i <= newUserCount; i++) {
-//       //   templateUsers +=
-//       //   `
-//       //     <li class="list-group-item active" >User #${i}</li>
-//       //     <li class="list-group-item" >User ID: ${users[i].id} </li>
-//       //     <li class="list-group-item" >User Title: ${users[i].title} </li>
-//       //     <li class="list-group-item" >User Completed: ${users[i].completed} </li>
-//       //   `
-//       // }
-
 //       document.querySelector(".users").innerHTML = newTemplateUsers
 //       document.querySelector(".users-title").innerHTML = "Users:"
 //     }
@@ -97,3 +128,30 @@ let newTemplateUsers = ``
 //   xhr.send()
 
 // }
+// CODE PIECE END
+
+getUsers()
+
+let flag = true;
+window.onscroll = () => {
+  let totalHeight = document.body.scrollHeight - window.innerHeight;
+  let progressHeight = (window.scrollY / totalHeight) * 100;
+  
+  console.log("===========================");
+  console.log("Total height: " + totalHeight);
+  console.log("Progress Height: " + progressHeight);
+  console.log("OFFSET: " + document.querySelector("body").offsetTop);
+
+  if (flag) {
+    // Your code here - this will execute the first time onscroll is triggered
+    if (progressHeight >= 100) {
+      getUsers()
+      flag = false; // Set the flag to false to prevent the code from executing again immediately
+  
+      setTimeout(function() {
+        flag = true; // Set the flag to true after a few seconds to allow the code to be executed again
+      }, 100); // Wait for  before setting the flag to true
+    }
+  }
+}
+
