@@ -40,7 +40,8 @@ function getUser() {
   xhr.send()
 }
 
-let count = 5;
+let countAmount = 5;
+let count = countAmount;
 function getUsers() {
   // first you have to create XHR Object
   let xhr = new XMLHttpRequest();
@@ -57,23 +58,31 @@ function getUsers() {
       const users = JSON.parse(this.responseText)
       let templateUsers = ``;
 
-      // itterate over all data
+      const maxCount = users.length
+      console.log(maxCount);
+
       for (let i = 0; i <= count; i++) {
-        templateUsers +=
-        `
-          <li class="list-group-item active" >User #${i}</li>
-          <li class="list-group-item" >User ID: ${users[i].id} </li>
-          <li class="list-group-item" >User Title: ${users[i].title} </li>
-          <li class="list-group-item" >User Completed: ${users[i].completed} </li>
-        `
+        if (i <= maxCount-1) {
+            templateUsers +=
+            `
+              <li class="list-group-item active" >User #${i}</li>
+              <li class="list-group-item" >User ID: ${users[i].id} </li>
+              <li class="list-group-item" >User Title: ${users[i].title} </li>
+              <li class="list-group-item" >User Completed: ${users[i].completed} </li>
+            `
+        } else {
+          templateUsers += `<h1 class="my-2">That's all the data!</h1>`
+        }
+      }
+  
+      let counter = countAmount;
+      console.log("MAX COUNT: " + maxCount);
+
+      if (count <= maxCount -1) {
+        count += counter;
       }
 
-      let counter = 5;
-      if (count <= users.length) {
-        count += counter;
-      } else {
-        console.log("Too Many");
-      }
+      console.log("COUNT: " + count);
 
       document.querySelector(".users").innerHTML = templateUsers
       document.querySelector(".users-title").innerHTML = "Users:"
@@ -84,7 +93,12 @@ function getUsers() {
   xhr.send()
 }
 
-// CODE PIECE
+getUsers()
+
+// CODE PIECE #1 GET ALL DATA WITHOUT ERROR
+// CODE PIECE #1 GET ALL DATA WITHOUT ERROR
+
+// CODE PIECE #2
 // let templateUsers = ``;
 // let newTemplateUsers = ``
 // function getUsersPossibleOptimized() {
@@ -128,30 +142,33 @@ function getUsers() {
 //   xhr.send()
 
 // }
-// CODE PIECE END
+// CODE PIECE #2 END
 
-getUsers()
+// CODE PIECE #3 INFINITE SCROLL
+function infiniteScroll () {
+  let flag = true;
 
-let flag = true;
-window.onscroll = () => {
-  let totalHeight = document.body.scrollHeight - window.innerHeight;
-  let progressHeight = (window.scrollY / totalHeight) * 100;
+  window.onscroll = () => {
+    let totalHeight = document.body.scrollHeight - window.innerHeight;
+    let progressHeight = (window.scrollY / totalHeight) * 100;
+    
+    console.log("===========================");
+    console.log("Total height: " + totalHeight);
+    console.log("Progress Height: " + progressHeight);
+    console.log("OFFSET: " + document.querySelector("body").offsetTop);
   
-  console.log("===========================");
-  console.log("Total height: " + totalHeight);
-  console.log("Progress Height: " + progressHeight);
-  console.log("OFFSET: " + document.querySelector("body").offsetTop);
-
-  if (flag) {
-    // Your code here - this will execute the first time onscroll is triggered
-    if (progressHeight >= 100) {
-      getUsers()
-      flag = false; // Set the flag to false to prevent the code from executing again immediately
-  
-      setTimeout(function() {
-        flag = true; // Set the flag to true after a few seconds to allow the code to be executed again
-      }, 100); // Wait for  before setting the flag to true
+    if (flag) {
+      // Your code here - this will execute the first time onscroll is triggered
+      if (progressHeight >= 100) {
+        getUsers()
+        flag = false; // Set the flag to false to prevent the code from executing again immediately
+    
+        setTimeout(function() {
+          flag = true; // Set the flag to true after a few seconds to allow the code to be executed again
+        }, 100); // Wait for  before setting the flag to true
+      }
     }
   }
 }
-
+infiniteScroll()
+// CODE PIECE #3 INFINITE SCROLL END
